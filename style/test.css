@@ -1,0 +1,11 @@
+button {
+  width: 50px;
+  height: 30px;
+  border: 2px solid black;
+  border-radius: 24px;
+}
+
+button::selection {
+  outline: none;
+  background-color: rgb(red, green, blue);
+}
