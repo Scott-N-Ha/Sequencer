@@ -1,0 +1,29 @@
+.sequence {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+}
+
+.instruments {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.audio-track {
+  min-height: 100px;
+  min-width: 100px;
+  border: 1px solid black;
+
+  display: flex;
+}
+
+.audio-track.current-step {
+  border: 2px solid red;
+}
+
+.queued-audio {
+  margin: 10px;
+  padding: 4px;
+  border: 1px solid lightgray;
+}

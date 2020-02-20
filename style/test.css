@@ -7,5 +7,4 @@ button {
 
 button::selection {
   outline: none;
-  background-color: rgb(red, green, blue);
 }

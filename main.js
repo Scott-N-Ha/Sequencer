@@ -108,9 +108,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -133,7 +133,23 @@ var library = {
   poly13: new Audio("./lib/audio/polysynth3.mp3"),
   poly14: new Audio("./lib/audio/polysynth4.mp3"),
   poly15: new Audio("./lib/audio/polysynth5.mp3"),
-  poly16: new Audio("./lib/audio/polysynth6.mp3")
+  poly16: new Audio("./lib/audio/polysynth6.mp3"),
+  bass1: new Audio("./lib/audio/bass1.mp3"),
+  bass2: new Audio("./lib/audio/bass2.mp3"),
+  bass3: new Audio("./lib/audio/bass3.mp3"),
+  bass4: new Audio("./lib/audio/bass4.mp3"),
+  bass5: new Audio("./lib/audio/bass5.mp3"),
+  bass6: new Audio("./lib/audio/bass6.mp3"),
+  bass7: new Audio("./lib/audio/bass7.mp3"),
+  bass8: new Audio("./lib/audio/bass8.mp3"),
+  bass9: new Audio("./lib/audio/bass9.mp3"),
+  bass10: new Audio("./lib/audio/bass10.mp3"),
+  bass11: new Audio("./lib/audio/bass11.mp3"),
+  bass12: new Audio("./lib/audio/bass12.mp3"),
+  bass13: new Audio("./lib/audio/bass13.mp3"),
+  bass14: new Audio("./lib/audio/bass14.mp3"),
+  bass15: new Audio("./lib/audio/bass15.mp3"),
+  bass16: new Audio("./lib/audio/bass16.mp3")
 };
 
 var Sequence =
@@ -146,23 +162,73 @@ function (_React$Component) {
 
     _classCallCheck(this, Sequence);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Sequence).call(this)); // this.state = {
-    //   library: library
-    // };
-
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Sequence).call(this));
+    _this.state = {
+      playlist: [[], [], [], []],
+      step: 0,
+      play: false
+    };
     _this.library = library;
+    _this.tick = _this.tick.bind(_assertThisInitialized(_this));
+    _this.playButtonClick = _this.playButtonClick.bind(_assertThisInitialized(_this));
+    _this.startInterval = _this.startInterval.bind(_assertThisInitialized(_this));
+    _this.metronome;
     return _this;
   }
 
   _createClass(Sequence, [{
-    key: "clickHandler",
-    value: function clickHandler(audio) {
-      console.log(audio);
-      return function () {
-        audio.play(); // setTimeout(() => {
-        //   audio.pause();
-        // }, 1000);
+    key: "tick",
+    value: function tick() {
+      this.setState({
+        step: (this.state.step + 1) % 4
+      });
+      this.state.playlist[this.state.step].map(function (queue) {
+        queue.obj.play();
+      });
+    }
+  }, {
+    key: "startInterval",
+    value: function startInterval() {
+      var _this2 = this;
+
+      this.metronome = setInterval(function () {
+        _this2.tick();
+      }, 1000);
+    }
+  }, {
+    key: "playButtonClick",
+    value: function playButtonClick() {
+      if (this.state.play) {
+        clearInterval(this.metronome);
+      } else {
+        this.startInterval();
+      }
+
+      this.setState({
+        play: !this.state.play
+      });
+    }
+  }, {
+    key: "instrumentHandler",
+    value: function instrumentHandler(audio) {
+      var queue = {
+        name: audio,
+        obj: this.library[audio]
       };
+      var that = this;
+      return function () {
+        // debugger
+        that.state.playlist[that.state.step].push(queue);
+        that.setState({
+          playlist: that.state.playlist
+        });
+      }; // console.log(audio);
+      // return () => {
+      //   audio.play();
+      //   // setTimeout(() => {
+      //   //   audio.pause();
+      //   // }, 1000);
+      // };
     }
   }, {
     key: "getRandomNum",
@@ -183,22 +249,44 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
-      var clip = Object.keys(this.library).map(function (audio) {
-        var color = _this2.rgbToHex(_this2.getRandomNum(0, 255), _this2.getRandomNum(0, 255), _this2.getRandomNum(0, 255));
+      var instruments = Object.keys(this.library).map(function (audio) {
+        var color = _this3.rgbToHex(_this3.getRandomNum(0, 255), _this3.getRandomNum(0, 255), _this3.getRandomNum(0, 255));
 
         var style = {
           "backgroundColor": color
         };
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-          onClick: _this2.clickHandler(_this2.library[audio]),
+          onClick: _this3.instrumentHandler(audio),
           style: style
         }, audio));
+      }); // debugger
+
+      var steps = this.state.playlist.map(function (row, idx) {
+        // debugger
+        var step = row.map(function (player) {
+          // debugger
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            className: "queued-audio"
+          }, player.name);
+        });
+        var setClass = _this3.state.step === idx ? "audio-track current-step" : "audio-track";
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+          className: setClass
+        }, step);
       });
+      var playButtonText = this.state.play ? "Pause" : "Play";
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "sequence"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, clip));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "play",
+        onClick: this.playButtonClick
+      }, playButtonText), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Current Step: ", this.state.step), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: "instruments"
+      }, instruments), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: "steps"
+      }, steps));
     }
   }]);
 
